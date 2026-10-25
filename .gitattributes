@@ -1,0 +1,12 @@
+# Normaliza finales de línea para que el repo funcione igual en Windows, Linux y macOS.
+* text=auto eol=lf
+
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+gradlew text eol=lf
+
+*.jar binary
+*.jks binary
+*.png binary
+*.webp binary

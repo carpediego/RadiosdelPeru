@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#0F1216</color>
+    <color name="card">#1A1F25</color>
+    <color name="card_active">#12304F</color>
+    <color name="card_stroke_active">#5B9BFF</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B3BDC7</color>
+    <color name="accent">#5B9BFF</color>
+    <color name="live">#3DD68C</color>
+    <color name="button">#1E8E56</color>
+    <color name="button_text">#FFFFFF</color>
+</resources>

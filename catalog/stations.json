@@ -1,0 +1,226 @@
+{
+  "schema": 1,
+  "version": 1,
+  "updated": "2026-10-24T00:00:00Z",
+  "stations": [
+    {
+      "id": "rpp",
+      "name": "RPP Noticias",
+      "tagline": "Noticias y actualidad",
+      "category": "noticias",
+      "color": "#0B5FFF",
+      "priority": 1,
+      "active": true,
+      "candidates": [
+        { "url": "https://mdstrm.com/audio/5fab3416b5f9ef165cfab6e9/icecast.audio", "type": "auto" },
+        { "url": "https://mdstrm.com/audio/5fab3416b5f9ef165cfab6e9/live.m3u8", "type": "hls" }
+      ],
+      "provider": { "kind": "mdstrm", "id": "5fab3416b5f9ef165cfab6e9" }
+    },
+    {
+      "id": "exitosa",
+      "name": "Radio Exitosa",
+      "tagline": "Noticias y opinión",
+      "category": "noticias",
+      "color": "#E63946",
+      "priority": 2,
+      "active": true,
+      "candidates": [
+        { "url": "https://neptuno-2-audio.mediaserver.digital/79525baf-b0f5-4013-a8bd-3c5c293c6561", "type": "auto" }
+      ]
+    },
+    {
+      "id": "panamericana",
+      "name": "Radio Panamericana",
+      "tagline": "Música y compañía",
+      "category": "variedades",
+      "color": "#C8102E",
+      "priority": 3,
+      "active": true,
+      "candidates": [
+        { "url": "https://mdstrm.com/audio/6598b62dded1380470f4e539/icecast.audio", "type": "auto" },
+        { "url": "https://mdstrm.com/audio/6598b62dded1380470f4e539/live.m3u8", "type": "hls" }
+      ],
+      "provider": { "kind": "mdstrm", "id": "6598b62dded1380470f4e539" }
+    },
+    {
+      "id": "lamega",
+      "name": "La Mega 96.7",
+      "tagline": "Música para todos",
+      "category": "musica",
+      "color": "#FF8C00",
+      "priority": 4,
+      "active": true,
+      "candidates": [
+        { "url": "https://mdstrm.com/audio/5fada56fe4e09508207a7951/icecast.audio", "type": "auto" },
+        { "url": "https://mdstrm.com/audio/5fada56fe4e09508207a7951/live.m3u8", "type": "hls" }
+      ],
+      "provider": { "kind": "mdstrm", "id": "5fada56fe4e09508207a7951" }
+    },
+    {
+      "id": "moda",
+      "name": "Radio Moda",
+      "tagline": "Música actual",
+      "category": "musica",
+      "color": "#FF5A5F",
+      "priority": 5,
+      "active": true,
+      "candidates": [
+        { "url": "https://mdstrm.com/audio/6839e1c82cc4c480fcd318dd/live.m3u8", "type": "hls" },
+        { "url": "https://mdstrm.com/audio/6839e1c82cc4c480fcd318dd/icecast.audio", "type": "auto" }
+      ],
+      "provider": { "kind": "mdstrm", "id": "6839e1c82cc4c480fcd318dd" }
+    },
+    {
+      "id": "studio92",
+      "name": "Studio 92",
+      "tagline": "Pop y rock",
+      "category": "musica",
+      "color": "#7B2FF7",
+      "priority": 6,
+      "active": true,
+      "candidates": [
+        { "url": "https://mdstrm.com/audio/5fada553978fe1080e3ac5ea/icecast.audio", "type": "auto" },
+        { "url": "https://mdstrm.com/audio/5fada553978fe1080e3ac5ea/live.m3u8", "type": "hls" }
+      ],
+      "provider": { "kind": "mdstrm", "id": "5fada553978fe1080e3ac5ea" }
+    },
+    {
+      "id": "oxigeno",
+      "name": "Radio Oxígeno",
+      "tagline": "Pop internacional",
+      "category": "musica",
+      "color": "#00A3E0",
+      "priority": 7,
+      "active": true,
+      "candidates": [
+        { "url": "https://mdstrm.com/audio/5fab0687bcd6c2389ee9480c/live.m3u8", "type": "hls" },
+        { "url": "https://mdstrm.com/audio/5fab0687bcd6c2389ee9480c/icecast.audio", "type": "auto" }
+      ],
+      "provider": { "kind": "mdstrm", "id": "5fab0687bcd6c2389ee9480c" }
+    },
+    {
+      "id": "lazona",
+      "name": "Radio La Zona",
+      "tagline": "Reggaetón y urbano",
+      "category": "musica",
+      "color": "#00B894",
+      "priority": 8,
+      "active": true,
+      "candidates": [
+        { "url": "https://mdstrm.com/audio/5fada54116646e098d97e6a5/icecast.audio", "type": "auto" },
+        { "url": "https://mdstrm.com/audio/5fada54116646e098d97e6a5/live.m3u8", "type": "hls" }
+      ],
+      "provider": { "kind": "mdstrm", "id": "5fada54116646e098d97e6a5" }
+    },
+    {
+      "id": "nuevaq",
+      "name": "Nueva Q",
+      "tagline": "Cumbia y salsa",
+      "category": "tropical",
+      "color": "#6C5CE7",
+      "priority": 9,
+      "active": true,
+      "candidates": [
+        { "url": "https://mdstrm.com/audio/6839e1f153fcf56d988d5943/live.m3u8", "type": "hls" },
+        { "url": "https://mdstrm.com/audio/6839e1f153fcf56d988d5943/icecast.audio", "type": "auto" }
+      ],
+      "provider": { "kind": "mdstrm", "id": "6839e1f153fcf56d988d5943" }
+    },
+    {
+      "id": "ritmo",
+      "name": "Ritmo Romántica",
+      "tagline": "Baladas románticas",
+      "category": "romantica",
+      "color": "#FF7AA2",
+      "priority": 10,
+      "active": true,
+      "candidates": [
+        { "url": "https://mdstrm.com/audio/6839e2376607bdf6b2fcde27/live.m3u8", "type": "hls" },
+        { "url": "https://mdstrm.com/audio/6839e2376607bdf6b2fcde27/icecast.audio", "type": "auto" }
+      ],
+      "provider": { "kind": "mdstrm", "id": "6839e2376607bdf6b2fcde27" }
+    },
+    {
+      "id": "corazon",
+      "name": "Radio Corazón",
+      "tagline": "Música romántica",
+      "category": "romantica",
+      "color": "#E91E63",
+      "priority": 11,
+      "active": true,
+      "candidates": [
+        { "url": "https://mdstrm.com/audio/5fada514fc16c006bd63370f/icecast.audio", "type": "auto" },
+        { "url": "https://mdstrm.com/audio/5fada514fc16c006bd63370f/live.m3u8", "type": "hls" }
+      ],
+      "provider": { "kind": "mdstrm", "id": "5fada514fc16c006bd63370f" }
+    },
+    {
+      "id": "felicidad",
+      "name": "Radio Felicidad",
+      "tagline": "Música del recuerdo",
+      "category": "romantica",
+      "color": "#F4A300",
+      "priority": 12,
+      "active": true,
+      "candidates": [
+        { "url": "https://mdstrm.com/audio/5fad731fcf097a068af3c8f7/icecast.audio", "type": "auto" },
+        { "url": "https://mdstrm.com/audio/5fad731fcf097a068af3c8f7/live.m3u8", "type": "hls" }
+      ],
+      "provider": { "kind": "mdstrm", "id": "5fad731fcf097a068af3c8f7" }
+    },
+    {
+      "id": "magica",
+      "name": "Radio Mágica",
+      "tagline": "Cumbia y huayno",
+      "category": "tropical",
+      "color": "#8E44AD",
+      "priority": 13,
+      "active": true,
+      "candidates": [
+        { "url": "https://mdstrm.com/audio/6839e28eb3fdc597ac2e2e43/live.m3u8", "type": "hls" },
+        { "url": "https://mdstrm.com/audio/6839e28eb3fdc597ac2e2e43/icecast.audio", "type": "auto" }
+      ],
+      "provider": { "kind": "mdstrm", "id": "6839e28eb3fdc597ac2e2e43" }
+    },
+    {
+      "id": "ondacero",
+      "name": "Onda Cero",
+      "tagline": "Noticias y música",
+      "category": "noticias",
+      "color": "#1B9AAA",
+      "priority": 14,
+      "active": true,
+      "candidates": [
+        { "url": "https://mdstrm.com/audio/6598b65ab398c90871aff8cc/icecast.audio", "type": "auto" },
+        { "url": "https://mdstrm.com/audio/6598b65ab398c90871aff8cc/live.m3u8", "type": "hls" }
+      ],
+      "provider": { "kind": "mdstrm", "id": "6598b65ab398c90871aff8cc" }
+    },
+    {
+      "id": "cumbiamix",
+      "name": "Radio Cumbia Mix",
+      "tagline": "Cumbia peruana",
+      "category": "tropical",
+      "color": "#F39C12",
+      "priority": 15,
+      "active": true,
+      "candidates": [
+        { "url": "https://mdstrm.com/audio/6598b6ab95a235085823b24f/icecast.audio", "type": "auto" }
+      ],
+      "provider": { "kind": "mdstrm", "id": "6598b6ab95a235085823b24f" }
+    },
+    {
+      "id": "filarmonia",
+      "name": "Filarmonía",
+      "tagline": "Música clásica",
+      "category": "cultural",
+      "color": "#8B0000",
+      "priority": 16,
+      "active": true,
+      "candidates": [
+        { "url": "https://c22.radioboss.fm:18100/live", "type": "auto" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Radios del Perú</string>
+
+    <string name="header_title">Radios del Perú</string>
+    <string name="header_subtitle">Toca una emisora para escuchar</string>
+
+    <string name="idle_title">Elige una radio</string>
+    <string name="idle_hint">Toca el nombre de la emisora</string>
+
+    <string name="status_connecting">Conectando…</string>
+    <string name="status_live">● EN VIVO</string>
+    <string name="status_paused">En pausa</string>
+    <string name="status_retrying">Sin conexión. Reintentando…</string>
+    <string name="status_unavailable">Esta radio no está disponible. Prueba otra.</string>
+
+    <string name="action_stop">DETENER</string>
+    <string name="action_listen">ESCUCHAR</string>
+
+    <string name="please_wait">Un momento…</string>
+
+    <string name="cd_play">Escuchar %1$s</string>
+    <string name="cd_stop">Detener %1$s</string>
+</resources>
