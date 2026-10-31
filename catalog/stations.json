@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "version": 2,
-  "updated": "2026-10-31T00:00:00Z",
+  "version": 3,
+  "updated": "2026-10-31T21:08:23.398Z",
   "stations": [
     {
       "id": "rpp",
@@ -12,10 +12,28 @@
       "priority": 1,
       "active": true,
       "candidates": [
-        { "url": "https://mdstrm.com/audio/5fab3416b5f9ef165cfab6e9/icecast.audio", "type": "auto" },
-        { "url": "https://mdstrm.com/audio/5fab3416b5f9ef165cfab6e9/live.m3u8", "type": "hls" }
+        {
+          "url": "https://pe-p4-p-e-cx1-audio.cdn.mdstrm.com/live-audio-aw/5fab3416b5f9ef165cfab6e9?aid=5faaeb72f92d7b07dfe10181&pid=kTzbKhAGHjwGE45Q6McH77cd7sccyZGW&sid=lknbMeKDGWtCwvZhAUWo2CAval8z3sVT&uid=VG4ekkUCt1wKpoa9ctTjUmU7pai9mLIC&es=pe-p4-p-e-cx1-audio.cdn.mdstrm.com&ote=1779578605129&ot=bbhJLI3z5USQBYRZIY1uUw&proto=https&pz=us&cP=128000&awCollectionId=5faaeb72f92d7b07dfe10181&liveId=5fab3416b5f9ef165cfab6e9&referer=https://emisoras.com.pe/&listenerId=VG4ekkUCt1wKpoa9ctTjUmU7pai9mLIC",
+          "type": "auto"
+        },
+        {
+          "url": "https://mdstrm.com/audio/5fab3416b5f9ef165cfab6e9/icecast.audio",
+          "type": "auto"
+        },
+        {
+          "url": "https://mdstrm.com/audio/5fab3416b5f9ef165cfab6e9/live.m3u8",
+          "type": "hls"
+        }
       ],
-      "provider": { "kind": "mdstrm", "id": "5fab3416b5f9ef165cfab6e9" }
+      "provider": {
+        "kind": "mdstrm",
+        "id": "5fab3416b5f9ef165cfab6e9"
+      },
+      "health": {
+        "fails": 0,
+        "lastOk": "2026-10-31T21:08:05.859Z",
+        "repairedAt": "2026-10-31T21:08:05.859Z"
+      }
     },
     {
       "id": "exitosa",
@@ -26,7 +44,10 @@
       "priority": 2,
       "active": true,
       "candidates": [
-        { "url": "https://neptuno-2-audio.mediaserver.digital/79525baf-b0f5-4013-a8bd-3c5c293c6561", "type": "auto" }
+        {
+          "url": "https://neptuno-2-audio.mediaserver.digital/79525baf-b0f5-4013-a8bd-3c5c293c6561",
+          "type": "auto"
+        }
       ]
     },
     {
@@ -38,10 +59,19 @@
       "priority": 3,
       "active": true,
       "candidates": [
-        { "url": "https://mdstrm.com/audio/6598b62dded1380470f4e539/icecast.audio", "type": "auto" },
-        { "url": "https://mdstrm.com/audio/6598b62dded1380470f4e539/live.m3u8", "type": "hls" }
+        {
+          "url": "https://mdstrm.com/audio/6598b62dded1380470f4e539/icecast.audio",
+          "type": "auto"
+        },
+        {
+          "url": "https://mdstrm.com/audio/6598b62dded1380470f4e539/live.m3u8",
+          "type": "hls"
+        }
       ],
-      "provider": { "kind": "mdstrm", "id": "6598b62dded1380470f4e539" }
+      "provider": {
+        "kind": "mdstrm",
+        "id": "6598b62dded1380470f4e539"
+      }
     },
     {
       "id": "lamega",
@@ -52,10 +82,19 @@
       "priority": 4,
       "active": true,
       "candidates": [
-        { "url": "https://mdstrm.com/audio/5fada56fe4e09508207a7951/icecast.audio", "type": "auto" },
-        { "url": "https://mdstrm.com/audio/5fada56fe4e09508207a7951/live.m3u8", "type": "hls" }
+        {
+          "url": "https://mdstrm.com/audio/5fada56fe4e09508207a7951/icecast.audio",
+          "type": "auto"
+        },
+        {
+          "url": "https://mdstrm.com/audio/5fada56fe4e09508207a7951/live.m3u8",
+          "type": "hls"
+        }
       ],
-      "provider": { "kind": "mdstrm", "id": "5fada56fe4e09508207a7951" }
+      "provider": {
+        "kind": "mdstrm",
+        "id": "5fada56fe4e09508207a7951"
+      }
     },
     {
       "id": "moda",
@@ -66,10 +105,19 @@
       "priority": 5,
       "active": true,
       "candidates": [
-        { "url": "https://mdstrm.com/audio/6839e1c82cc4c480fcd318dd/live.m3u8", "type": "hls" },
-        { "url": "https://mdstrm.com/audio/6839e1c82cc4c480fcd318dd/icecast.audio", "type": "auto" }
+        {
+          "url": "https://mdstrm.com/audio/6839e1c82cc4c480fcd318dd/live.m3u8",
+          "type": "hls"
+        },
+        {
+          "url": "https://mdstrm.com/audio/6839e1c82cc4c480fcd318dd/icecast.audio",
+          "type": "auto"
+        }
       ],
-      "provider": { "kind": "mdstrm", "id": "6839e1c82cc4c480fcd318dd" }
+      "provider": {
+        "kind": "mdstrm",
+        "id": "6839e1c82cc4c480fcd318dd"
+      }
     },
     {
       "id": "studio92",
@@ -80,10 +128,19 @@
       "priority": 6,
       "active": true,
       "candidates": [
-        { "url": "https://mdstrm.com/audio/5fada553978fe1080e3ac5ea/icecast.audio", "type": "auto" },
-        { "url": "https://mdstrm.com/audio/5fada553978fe1080e3ac5ea/live.m3u8", "type": "hls" }
+        {
+          "url": "https://mdstrm.com/audio/5fada553978fe1080e3ac5ea/icecast.audio",
+          "type": "auto"
+        },
+        {
+          "url": "https://mdstrm.com/audio/5fada553978fe1080e3ac5ea/live.m3u8",
+          "type": "hls"
+        }
       ],
-      "provider": { "kind": "mdstrm", "id": "5fada553978fe1080e3ac5ea" }
+      "provider": {
+        "kind": "mdstrm",
+        "id": "5fada553978fe1080e3ac5ea"
+      }
     },
     {
       "id": "oxigeno",
@@ -94,10 +151,19 @@
       "priority": 7,
       "active": true,
       "candidates": [
-        { "url": "https://mdstrm.com/audio/5fab0687bcd6c2389ee9480c/live.m3u8", "type": "hls" },
-        { "url": "https://mdstrm.com/audio/5fab0687bcd6c2389ee9480c/icecast.audio", "type": "auto" }
+        {
+          "url": "https://mdstrm.com/audio/5fab0687bcd6c2389ee9480c/live.m3u8",
+          "type": "hls"
+        },
+        {
+          "url": "https://mdstrm.com/audio/5fab0687bcd6c2389ee9480c/icecast.audio",
+          "type": "auto"
+        }
       ],
-      "provider": { "kind": "mdstrm", "id": "5fab0687bcd6c2389ee9480c" }
+      "provider": {
+        "kind": "mdstrm",
+        "id": "5fab0687bcd6c2389ee9480c"
+      }
     },
     {
       "id": "lazona",
@@ -108,10 +174,19 @@
       "priority": 8,
       "active": true,
       "candidates": [
-        { "url": "https://mdstrm.com/audio/5fada54116646e098d97e6a5/icecast.audio", "type": "auto" },
-        { "url": "https://mdstrm.com/audio/5fada54116646e098d97e6a5/live.m3u8", "type": "hls" }
+        {
+          "url": "https://mdstrm.com/audio/5fada54116646e098d97e6a5/icecast.audio",
+          "type": "auto"
+        },
+        {
+          "url": "https://mdstrm.com/audio/5fada54116646e098d97e6a5/live.m3u8",
+          "type": "hls"
+        }
       ],
-      "provider": { "kind": "mdstrm", "id": "5fada54116646e098d97e6a5" }
+      "provider": {
+        "kind": "mdstrm",
+        "id": "5fada54116646e098d97e6a5"
+      }
     },
     {
       "id": "nuevaq",
@@ -122,10 +197,19 @@
       "priority": 9,
       "active": true,
       "candidates": [
-        { "url": "https://mdstrm.com/audio/6839e1f153fcf56d988d5943/live.m3u8", "type": "hls" },
-        { "url": "https://mdstrm.com/audio/6839e1f153fcf56d988d5943/icecast.audio", "type": "auto" }
+        {
+          "url": "https://mdstrm.com/audio/6839e1f153fcf56d988d5943/live.m3u8",
+          "type": "hls"
+        },
+        {
+          "url": "https://mdstrm.com/audio/6839e1f153fcf56d988d5943/icecast.audio",
+          "type": "auto"
+        }
       ],
-      "provider": { "kind": "mdstrm", "id": "6839e1f153fcf56d988d5943" }
+      "provider": {
+        "kind": "mdstrm",
+        "id": "6839e1f153fcf56d988d5943"
+      }
     },
     {
       "id": "ritmo",
@@ -136,10 +220,19 @@
       "priority": 10,
       "active": true,
       "candidates": [
-        { "url": "https://mdstrm.com/audio/6839e2376607bdf6b2fcde27/live.m3u8", "type": "hls" },
-        { "url": "https://mdstrm.com/audio/6839e2376607bdf6b2fcde27/icecast.audio", "type": "auto" }
+        {
+          "url": "https://mdstrm.com/audio/6839e2376607bdf6b2fcde27/live.m3u8",
+          "type": "hls"
+        },
+        {
+          "url": "https://mdstrm.com/audio/6839e2376607bdf6b2fcde27/icecast.audio",
+          "type": "auto"
+        }
       ],
-      "provider": { "kind": "mdstrm", "id": "6839e2376607bdf6b2fcde27" }
+      "provider": {
+        "kind": "mdstrm",
+        "id": "6839e2376607bdf6b2fcde27"
+      }
     },
     {
       "id": "corazon",
@@ -150,10 +243,19 @@
       "priority": 11,
       "active": true,
       "candidates": [
-        { "url": "https://mdstrm.com/audio/5fada514fc16c006bd63370f/icecast.audio", "type": "auto" },
-        { "url": "https://mdstrm.com/audio/5fada514fc16c006bd63370f/live.m3u8", "type": "hls" }
+        {
+          "url": "https://mdstrm.com/audio/5fada514fc16c006bd63370f/icecast.audio",
+          "type": "auto"
+        },
+        {
+          "url": "https://mdstrm.com/audio/5fada514fc16c006bd63370f/live.m3u8",
+          "type": "hls"
+        }
       ],
-      "provider": { "kind": "mdstrm", "id": "5fada514fc16c006bd63370f" }
+      "provider": {
+        "kind": "mdstrm",
+        "id": "5fada514fc16c006bd63370f"
+      }
     },
     {
       "id": "felicidad",
@@ -164,10 +266,19 @@
       "priority": 12,
       "active": true,
       "candidates": [
-        { "url": "https://mdstrm.com/audio/5fad731fcf097a068af3c8f7/icecast.audio", "type": "auto" },
-        { "url": "https://mdstrm.com/audio/5fad731fcf097a068af3c8f7/live.m3u8", "type": "hls" }
+        {
+          "url": "https://mdstrm.com/audio/5fad731fcf097a068af3c8f7/icecast.audio",
+          "type": "auto"
+        },
+        {
+          "url": "https://mdstrm.com/audio/5fad731fcf097a068af3c8f7/live.m3u8",
+          "type": "hls"
+        }
       ],
-      "provider": { "kind": "mdstrm", "id": "5fad731fcf097a068af3c8f7" }
+      "provider": {
+        "kind": "mdstrm",
+        "id": "5fad731fcf097a068af3c8f7"
+      }
     },
     {
       "id": "magica",
@@ -178,10 +289,19 @@
       "priority": 13,
       "active": true,
       "candidates": [
-        { "url": "https://mdstrm.com/audio/6839e28eb3fdc597ac2e2e43/live.m3u8", "type": "hls" },
-        { "url": "https://mdstrm.com/audio/6839e28eb3fdc597ac2e2e43/icecast.audio", "type": "auto" }
+        {
+          "url": "https://mdstrm.com/audio/6839e28eb3fdc597ac2e2e43/live.m3u8",
+          "type": "hls"
+        },
+        {
+          "url": "https://mdstrm.com/audio/6839e28eb3fdc597ac2e2e43/icecast.audio",
+          "type": "auto"
+        }
       ],
-      "provider": { "kind": "mdstrm", "id": "6839e28eb3fdc597ac2e2e43" }
+      "provider": {
+        "kind": "mdstrm",
+        "id": "6839e28eb3fdc597ac2e2e43"
+      }
     },
     {
       "id": "ondacero",
@@ -192,10 +312,19 @@
       "priority": 14,
       "active": true,
       "candidates": [
-        { "url": "https://mdstrm.com/audio/6598b65ab398c90871aff8cc/icecast.audio", "type": "auto" },
-        { "url": "https://mdstrm.com/audio/6598b65ab398c90871aff8cc/live.m3u8", "type": "hls" }
+        {
+          "url": "https://mdstrm.com/audio/6598b65ab398c90871aff8cc/icecast.audio",
+          "type": "auto"
+        },
+        {
+          "url": "https://mdstrm.com/audio/6598b65ab398c90871aff8cc/live.m3u8",
+          "type": "hls"
+        }
       ],
-      "provider": { "kind": "mdstrm", "id": "6598b65ab398c90871aff8cc" }
+      "provider": {
+        "kind": "mdstrm",
+        "id": "6598b65ab398c90871aff8cc"
+      }
     },
     {
       "id": "cumbiamix",
@@ -206,9 +335,15 @@
       "priority": 15,
       "active": true,
       "candidates": [
-        { "url": "https://mdstrm.com/audio/6598b6ab95a235085823b24f/icecast.audio", "type": "auto" }
+        {
+          "url": "https://mdstrm.com/audio/6598b6ab95a235085823b24f/icecast.audio",
+          "type": "auto"
+        }
       ],
-      "provider": { "kind": "mdstrm", "id": "6598b6ab95a235085823b24f" }
+      "provider": {
+        "kind": "mdstrm",
+        "id": "6598b6ab95a235085823b24f"
+      }
     },
     {
       "id": "filarmonia",
@@ -219,7 +354,10 @@
       "priority": 16,
       "active": true,
       "candidates": [
-        { "url": "https://c22.radioboss.fm:18100/live", "type": "auto" }
+        {
+          "url": "https://c22.radioboss.fm:18100/live",
+          "type": "auto"
+        }
       ]
     },
     {
@@ -231,10 +369,19 @@
       "priority": 17,
       "active": true,
       "candidates": [
-        { "url": "https://mdstrm.com/audio/6839e261d2efddf5bfbc2d3d/icecast.audio", "type": "auto" },
-        { "url": "https://mdstrm.com/audio/6839e261d2efddf5bfbc2d3d/live.m3u8", "type": "hls" }
+        {
+          "url": "https://mdstrm.com/audio/6839e261d2efddf5bfbc2d3d/icecast.audio",
+          "type": "auto"
+        },
+        {
+          "url": "https://mdstrm.com/audio/6839e261d2efddf5bfbc2d3d/live.m3u8",
+          "type": "hls"
+        }
       ],
-      "provider": { "kind": "mdstrm", "id": "6839e261d2efddf5bfbc2d3d" }
+      "provider": {
+        "kind": "mdstrm",
+        "id": "6839e261d2efddf5bfbc2d3d"
+      }
     }
   ]
 }
