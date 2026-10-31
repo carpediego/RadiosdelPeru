@@ -14,7 +14,7 @@ import java.net.URL
  * Estrategia:
  *   1. `assets/stations.json` viene dentro del APK: la app funciona siempre, incluso sin internet.
  *   2. Si hay una copia remota más nueva en caché, se usa esa (el robot corrige URLs rotas).
- *   3. Al arrancar se consulta el CDN como máximo una vez cada [CHECK_INTERVAL_MS].
+ *   3. Al arrancar se consulta el CDN como máximo una vez cada 15 minutos.
  *
  * Regla que nunca se rompe: solo se guardan URLs de *entrada*. Los proveedores
  * (mdstrm, zeno…) redirigen a una CDN con token que caduca, así que cachear la
@@ -49,8 +49,8 @@ class CatalogRepository(private val context: Context) {
                 mainHandler.post { onUpdated(fresh) }
             }
             val now = System.currentTimeMillis()
-            // Si no se pudo consultar (sin internet), reintentamos en 30 min en vez de 6 h.
-            val stamp = if (fresh != null) now else now - CHECK_INTERVAL_MS + FAILURE_RETRY_MS
+        // Si no se pudo consultar (sin internet), reintentamos en 5 min en vez de 15.
+        val stamp = if (fresh != null) now else now - CHECK_INTERVAL_MS + FAILURE_RETRY_MS
             prefs.edit().putLong(KEY_LAST_CHECK, stamp).apply()
         }.start()
     }
@@ -214,8 +214,9 @@ class CatalogRepository(private val context: Context) {
 
         const val CONNECT_TIMEOUT_MS = 6_000
         const val READ_TIMEOUT_MS = 8_000
-        const val CHECK_INTERVAL_MS = 6L * 60 * 60 * 1000
-        const val FAILURE_RETRY_MS = 30L * 60 * 1000
+        // Comprueba en cada arranque de la app, como máximo una vez cada 15 min.
+        const val CHECK_INTERVAL_MS = 15L * 60 * 1000
+        const val FAILURE_RETRY_MS = 5L * 60 * 1000
         const val MAX_BODY_CHARS = 2_000_000
         const val MIN_STATIONS = 5
         const val SUPPORTED_SCHEMA = 1

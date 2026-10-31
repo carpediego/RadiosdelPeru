@@ -4,7 +4,7 @@ App Android minimalista para escuchar radios peruanas. Pensada para personas may
 una sola pantalla, letras grandes, un toque para escuchar, sin publicidad.
 
 - **Paquete:** `pe.radiosdelperu.app`
-- **Versión:** 1.1.0 (versionCode 2)
+- **Versión:** 1.2.0 (versionCode 3)
 - **Android:** 7.0 (API 24) en adelante · targetSdk 36
 - **APK release:** 1,65 MB · sin SDKs de anuncios ni analítica
 
@@ -27,7 +27,7 @@ usa la copia embebida en el APK. El catálogo remoto es una mejora, no una depen
 
 ### Cómo funciona
 
-1. Al arrancar, si pasaron más de 6 h desde la última comprobación, la app pide
+1. Al arrancar, si pasaron más de 15 min desde la última comprobación, la app pide
    `catalog/stations.json` al CDN (primero `raw.githubusercontent.com`, luego jsDelivr).
 2. Si la versión descargada es mayor que la que tiene, la guarda y refresca la lista
    sin cortar la radio que esté sonando.
