@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "version": 1,
-  "updated": "2026-10-24T00:00:00Z",
+  "version": 2,
+  "updated": "2026-10-31T00:00:00Z",
   "stations": [
     {
       "id": "rpp",
@@ -221,6 +221,20 @@
       "candidates": [
         { "url": "https://c22.radioboss.fm:18100/live", "type": "auto" }
       ]
+    },
+    {
+      "id": "radiomar",
+      "name": "Radiomar",
+      "tagline": "Salsa de hoy y de siempre",
+      "category": "tropical",
+      "color": "#D41B1B",
+      "priority": 17,
+      "active": true,
+      "candidates": [
+        { "url": "https://mdstrm.com/audio/6839e261d2efddf5bfbc2d3d/icecast.audio", "type": "auto" },
+        { "url": "https://mdstrm.com/audio/6839e261d2efddf5bfbc2d3d/live.m3u8", "type": "hls" }
+      ],
+      "provider": { "kind": "mdstrm", "id": "6839e261d2efddf5bfbc2d3d" }
     }
   ]
 }
