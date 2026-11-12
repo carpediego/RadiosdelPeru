@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "version": 3,
-  "updated": "2026-10-31T21:08:23.398Z",
+  "version": 4,
+  "updated": "2026-11-12T23:17:44.275Z",
   "stations": [
     {
       "id": "rpp",
@@ -355,10 +355,19 @@
       "active": true,
       "candidates": [
         {
+          "url": "http://c22.radioboss.fm:8100/stream",
+          "type": "auto"
+        },
+        {
           "url": "https://c22.radioboss.fm:18100/live",
           "type": "auto"
         }
-      ]
+      ],
+      "health": {
+        "fails": 0,
+        "lastOk": "2026-11-12T23:17:41.887Z",
+        "repairedAt": "2026-11-12T23:17:41.887Z"
+      }
     },
     {
       "id": "radiomar",
