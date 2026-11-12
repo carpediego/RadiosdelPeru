@@ -1,31 +1,83 @@
-# Radios del Perú — v2 (desarrollo)
+# Radios del Perú — v4 (desarrollo)
 
 App Android minimalista para escuchar radios peruanas. Pensada para personas mayores:
 una sola pantalla, letras grandes, un toque para escuchar, sin publicidad.
 
 - **Paquete:** `pe.radiosdelperu.app`
-- **Versión:** 1.2.0 (versionCode 3)
+- **Versión:** 1.3.0 (versionCode 4)
 - **Android:** 7.0 (API 24) en adelante · targetSdk 36
-- **APK release:** 1,65 MB · sin SDKs de anuncios ni analítica
+- **APK release:** 1,65 MB · sin SDKs de anuncios ni analítica · misma firma que v1–v3
 
-> Esta es la **copia de trabajo**. La versión probada y estable está en `..\v1`.
+> `v4` es la copia de trabajo. `v3` queda como 1.2.0 (la anterior) y `v1` como la
+> versión probada y estable.
 
 ---
 
-## Qué hay de nuevo en v2
+## Qué hay de nuevo en v4: reanudar siempre EN VIVO
 
-**El catálogo ya no vive encerrado en el APK.**
+Antes, pausar desde la notificación o la pantalla de bloqueo funcionaba, pero **volver a
+darle play no**: o sonaba audio ya pasado, o no sonaba nada.
 
-| Antes (v1) | Ahora (v2) |
+La causa no era el botón, era la naturaleza del directo:
+
+| Problema | Por qué pasaba |
 |---|---|
-| Las URLs de las emisoras estaban solo dentro del APK. | Se descargan de `catalog/stations.json` en GitHub y se cachean. |
-| Si una radio cambiaba de URL, había que recompilar y reinstalar. | La app la corrige sola en el siguiente arranque. |
-| Una emisora muerta se quedaba en la lista para siempre. | El robot la oculta después de 5 fallos consecutivos. |
+| La conexión caduca | Un directo no tiene "cinta". Al pausar, el buffer se queda con audio viejo; Icecast corta a los oyentes inactivos (~10–30 s) y las listas HLS borran los segmentos antiguos. |
+| Nadie reintentaba | Los reintentos vivían en `MainActivity`, y esa pantalla no existe con el teléfono bloqueado. |
+| La tarjeta de reanudación era decorativa | Android 11+ ofrece un play para la última sesión; sin `onPlaybackResumption` ese botón no hacía nada. |
 
-La app **sigue funcionando sin internet y sin GitHub**: si no puede descargar nada,
-usa la copia embebida en el APK. El catálogo remoto es una mejora, no una dependencia.
+### La solución
 
-### Cómo funciona
+1. **Play = reconectar al directo.** `LiveRadioPlayer` envuelve el reproductor y, al
+   recibir play después de una pausa, vuelve a pedir el stream desde cero
+   (`setMediaItem` + `prepare`). Es el mismo botón de siempre: no hay botones nuevos.
+2. **Todo lo importante vive en el servicio.** Alternativas de URL, reintentos con
+   espera (1,5 → 3 → 6 → 12 s) y estado. Así funciona con la pantalla apagada; de paso,
+   una llamada larga ya no deja la radio muda.
+3. **Se recuerda la última emisora** (`SessionState`) y se implementa
+   `onPlaybackResumption`. Con el `MediaButtonReceiver` en el manifiesto, el play de la
+   tarjeta del bloqueo arranca la emisora aunque la app esté cerrada o el teléfono se
+   haya reiniciado.
+4. **Pausa de verdad, sin sorpresas.** Si el stream falla mientras está en pausa, la app
+   **no** reconecta sola: se queda callada hasta que el usuario pida play.
+
+La pantalla de la app ya no decide nada: dibuja el estado que publica el servicio
+(`PlaybackStatus`) y envía órdenes. El botón grande hace las dos cosas:
+
+- sonando / conectando → **DETENER** (corta del todo y quita la tarjeta);
+- en pausa → **ESCUCHAR** (vuelve al directo, en el momento actual).
+
+---
+
+## Cómo llega a los teléfonos
+
+Hay dos cosas distintas y conviene no confundirlas:
+
+| Qué | ¿Se actualiza solo? |
+|---|---|
+| **Catálogo de emisoras** (`catalog/stations.json` en GitHub) | **Sí.** La app lo descarga al arrancar (máx. 1 vez cada 15 min). Cambiar una URL no requiere compilar. |
+| **Código de la app** (esta versión) | **No.** Hay que instalar el APK nuevo encima del anterior. |
+
+Subir el código a GitHub **no** actualiza los teléfonos: solo deja el repositorio al día
+y sirve para publicar el APK (por ejemplo, en *Releases*). Como la firma es la misma que
+v1–v3, el APK se instala **encima** sin desinstalar nada y sin perder nada.
+
+Para que el teléfono avise solo de una versión nueva haría falta el pendiente de abajo
+(`version.json` + botón "Actualizar"): eso sí descargaría e instalaría el APK desde la
+propia app.
+
+---
+
+## Cómo se mantiene sola
+
+```
+GitHub: catalog/stations.json
+   │
+   ├── Robot cada 6 h: prueba las URLs, repara las rotas, oculta las muertas
+   │
+   └── App: descarga el catálogo al arrancar (máx. 1 vez cada 15 min)
+            y usa la copia embebida si no hay internet
+```
 
 1. Al arrancar, si pasaron más de 15 min desde la última comprobación, la app pide
    `catalog/stations.json` al CDN (primero `raw.githubusercontent.com`, luego jsDelivr).
@@ -33,17 +85,10 @@ usa la copia embebida en el APK. El catálogo remoto es una mejora, no una depen
    sin cortar la radio que esté sonando.
 3. Si el archivo llega corrupto o con menos de 5 emisoras, lo ignora y sigue con el suyo.
 
-### El robot
-
-`.github/workflows/catalog.yml` corre **cada 6 horas**:
-
-1. Prueba las URLs de las 16 emisoras (y sus alternativas).
-2. Si una falla, busca reemplazo en `radio-browser.info`, lo valida y lo guarda.
-3. Si no encuentra reemplazo, suma un fallo; al quinto la oculta (`active: false`).
-4. Si cambió algo, sube `version` y hace commit. La app lo recoge sola.
-
-Si falla más de la mitad del catálogo, el robot **no toca nada**: asume que el problema
-es su propia red, no las radios.
+El robot (`.github/workflows/catalog.yml`) prueba las URLs de las emisoras y sus
+alternativas, busca reemplazo en `radio-browser.info`, valida y guarda. Si una emisora
+falla 5 veces seguidas, la oculta (`active: false`). Si falla más de la mitad del
+catálogo, no toca nada: asume que el problema es su propia red.
 
 También se puede lanzar a mano: *Actions → Catalogo → Run workflow*.
 
@@ -63,8 +108,6 @@ También se puede lanzar a mano: *Actions → Catalogo → Run workflow*.
 
 Copia el APK al teléfono, ábrelo y acepta "Permitir instalar apps de esta fuente".
 Si Play Protect avisa, elige **"Instalar de todos modos"**.
-
-> La firma es la misma que v1, así que se instala **encima** sin desinstalar nada.
 
 ---
 
@@ -88,10 +131,13 @@ tools/validate.mjs             ← validador/reparador (lo usa el robot y se pue
 .github/workflows/catalog.yml  ← robot cada 6 horas
 app/src/main/
 ├─ java/pe/radiosdelperu/app/
-│  ├─ MainActivity.kt              pantalla única y lógica de reproducción
+│  ├─ MainActivity.kt              pantalla: dibuja el estado y envía órdenes
 │  ├─ catalog/Station.kt           modelo de emisora
 │  ├─ catalog/CatalogRepository.kt embebido + caché + descarga remota
-│  ├─ player/PlaybackService.kt    servicio en primer plano (Media3)
+│  ├─ player/PlaybackService.kt    servicio (Media3): sesión, reintentos, reanudación
+│  ├─ player/LiveRadioPlayer.kt    play = volver al directo
+│  ├─ player/PlaybackStatus.kt     estado compartido servicio ↔ pantalla
+│  ├─ player/SessionState.kt       última emisora escuchada
 │  └─ ui/StationAdapter.kt         lista de emisoras
 └─ res/                            layouts, colores día/noche, icono
 ```
@@ -127,7 +173,7 @@ Huella SHA-256: `6BB20C4CBE6462961A2030B29E9094DFF815114B7FFFAB80576352C3A0A5AAE
 
 ## Pendiente
 
+- [ ] Aviso de nueva versión del APK (`version.json` + botón "Actualizar").
 - [ ] Favoritos y filtros por categoría.
 - [ ] Logos reales de las emisoras.
-- [ ] Aviso de nueva versión del APK (`version.json` + botón "Actualizar").
 - [ ] Ampliar a ~35 emisoras (regionales).

@@ -38,6 +38,20 @@
                 <action android:name="androidx.media3.session.MediaSessionService" />
             </intent-filter>
         </service>
+
+        <!--
+            Sin este receptor, Android no puede mandar el play de la pantalla de bloqueo
+            cuando la app ya no está viva (tarjeta de "reanudación"): el botón no hace nada.
+            El receptor arranca el servicio y PlaybackService.onPlaybackResumption
+            devuelve la última emisora, que se abre en directo.
+        -->
+        <receiver
+            android:name="androidx.media3.session.MediaButtonReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
