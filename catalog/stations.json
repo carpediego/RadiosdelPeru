@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "version": 4,
-  "updated": "2026-11-12T23:17:44.275Z",
+  "version": 5,
+  "updated": "2026-11-15T22:34:47.680Z",
   "stations": [
     {
       "id": "rpp",
@@ -364,7 +364,7 @@
         }
       ],
       "health": {
-        "fails": 0,
+        "fails": 1,
         "lastOk": "2026-11-12T23:17:41.887Z",
         "repairedAt": "2026-11-12T23:17:41.887Z"
       }
