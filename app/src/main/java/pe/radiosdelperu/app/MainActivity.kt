@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -26,6 +27,9 @@ import pe.radiosdelperu.app.catalog.Station
 import pe.radiosdelperu.app.player.PlaybackService
 import pe.radiosdelperu.app.player.PlaybackStatus
 import pe.radiosdelperu.app.ui.StationAdapter
+import pe.radiosdelperu.app.update.UpdateInfo
+import pe.radiosdelperu.app.update.Updater
+import java.io.File
 
 /**
  * Pantalla única.
@@ -33,20 +37,33 @@ import pe.radiosdelperu.app.ui.StationAdapter
  * Ya no manda en la reproducción: el que decide (y el que reintenta) es
  * [PlaybackService], porque tiene que funcionar también con la pantalla bloqueada.
  * Aquí solo se pinta el estado que publica el servicio y se envían las órdenes.
+ *
+ * También vive aquí el actualizador: etiqueta de versión al pie, "Actualizar" cuando
+ * hay versión nueva y el gesto de 5 toques sobre el título para forzarla.
  */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var adapter: StationAdapter
     private lateinit var txtNowTitle: TextView
     private lateinit var txtNowStatus: TextView
+    private lateinit var txtVersion: TextView
+    private lateinit var txtUpdate: TextView
     private lateinit var btnAction: Button
 
     private var controller: MediaController? = null
     private var controllerFuture: ListenableFuture<MediaController>? = null
 
     private var stations: List<Station> = emptyList()
+    private var catalogVersion = 0
 
     private val repository by lazy { CatalogRepository(this) }
+    private val updater by lazy { Updater(this) }
+
+    private var pendingUpdate: UpdateInfo? = null
+    private var pendingApk: File? = null
+
+    private var taps = 0
+    private var firstTapAt = 0L
 
     private val requestNotifications =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { /* opcional */ }
@@ -71,6 +88,8 @@ class MainActivity : AppCompatActivity() {
 
         txtNowTitle = findViewById(R.id.txtNowTitle)
         txtNowStatus = findViewById(R.id.txtNowStatus)
+        txtVersion = findViewById(R.id.txtVersion)
+        txtUpdate = findViewById(R.id.btnUpdate)
         btnAction = findViewById(R.id.btnStop)
 
         adapter = StationAdapter { station -> onStationClicked(station) }
@@ -79,14 +98,24 @@ class MainActivity : AppCompatActivity() {
         list.adapter = adapter
         list.itemAnimator = null
 
-        stations = repository.load().stations
+        val snapshot = repository.load()
+        stations = snapshot.stations
+        catalogVersion = snapshot.version
         adapter.submit(stations)
 
         // El catálogo remoto se consulta en segundo plano; si hay versión nueva, se
         // refresca la lista sin molestar al usuario y sin cortar la radio.
-        repository.refreshAsync { snapshot -> applyCatalog(snapshot) }
+        repository.refreshAsync { fresh -> applyCatalog(fresh) }
 
         btnAction.setOnClickListener { onActionClicked() }
+
+        // Actualizador: una comprobación al día, chip "Actualizar" solo si hay novedad
+        // y 5 toques sobre el título como atajo para forzarla.
+        updater.listener = updateListener
+        findViewById<View>(R.id.txtTitle).setOnClickListener { onTitleTapped() }
+        txtUpdate.setOnClickListener { onUpdateClicked() }
+        renderVersionLabel()
+        updater.check(forced = false)
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -112,6 +141,11 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
     }
 
+    override fun onDestroy() {
+        updater.listener = null
+        super.onDestroy()
+    }
+
     private fun connectController() {
         val token = SessionToken(this, ComponentName(this, PlaybackService::class.java))
         val future = MediaController.Builder(this, token).buildAsync()
@@ -123,6 +157,104 @@ class MainActivity : AppCompatActivity() {
                 null
             }
         }, ContextCompat.getMainExecutor(this))
+    }
+
+    // ------------------------------------------------------------ actualizador
+
+    /** Cinco toques seguidos sobre el título (menos de 3 s entre el primero y el último). */
+    private fun onTitleTapped() {
+        val now = SystemClock.elapsedRealtime()
+        if (now - firstTapAt > TAPS_WINDOW_MS) {
+            taps = 0
+            firstTapAt = now
+        }
+        taps++
+        if (taps >= TAPS_REQUIRED) {
+            taps = 0
+            firstTapAt = 0L
+            updater.check(forced = true)
+        }
+    }
+
+    private fun onUpdateClicked() {
+        pendingApk?.let {
+            updater.install(it)
+            return
+        }
+        pendingUpdate?.let { startDownload(it) }
+    }
+
+    private fun startDownload(info: UpdateInfo) {
+        txtUpdate.visibility = View.VISIBLE
+        txtUpdate.text = getString(R.string.update_downloading, 0)
+        updater.download(info)
+    }
+
+    private fun renderVersionLabel() {
+        txtVersion.text = getString(
+            R.string.version_label,
+            updater.installedVersionName,
+            catalogVersion
+        )
+    }
+
+    private val updateListener = object : Updater.Listener {
+
+        override fun onChecking(forced: Boolean) {
+            if (!forced) return
+            Toast.makeText(this@MainActivity, R.string.update_checking, Toast.LENGTH_SHORT).show()
+        }
+
+        override fun onUpToDate(forced: Boolean, installedVersion: String) {
+            // Solo hablamos si el usuario lo pidió con los 5 toques.
+            if (!forced) return
+            Toast.makeText(
+                this@MainActivity,
+                getString(R.string.update_up_to_date, installedVersion),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        override fun onUpdateAvailable(info: UpdateInfo, forced: Boolean) {
+            pendingUpdate = info
+            txtUpdate.visibility = View.VISIBLE
+            txtUpdate.text = getString(R.string.update_action)
+
+            if (forced) {
+                Toast.makeText(
+                    this@MainActivity,
+                    getString(R.string.update_available_toast, info.versionName),
+                    Toast.LENGTH_SHORT
+                ).show()
+                startDownload(info)
+            }
+        }
+
+        override fun onDownloading(percent: Int) {
+            txtUpdate.visibility = View.VISIBLE
+            txtUpdate.text = getString(R.string.update_downloading, percent)
+        }
+
+        override fun onReady(file: File) {
+            pendingApk = file
+            txtUpdate.visibility = View.VISIBLE
+            txtUpdate.text = getString(R.string.update_install)
+            updater.install(file)
+        }
+
+        override fun onError(message: String) {
+            txtUpdate.visibility = if (pendingUpdate != null) View.VISIBLE else View.GONE
+            txtUpdate.text = getString(R.string.update_action)
+            Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
+        }
+
+        override fun onInstallPermissionNeeded() {
+            Toast.makeText(
+                this@MainActivity,
+                R.string.update_permission_needed,
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     // ---------------------------------------------------------------- acciones
@@ -223,7 +355,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun applyCatalog(snapshot: CatalogRepository.Snapshot) {
         stations = snapshot.stations
+        catalogVersion = snapshot.version
         adapter.submit(stations)
+        renderVersionLabel()
         render(PlaybackStatus.current)
     }
 
@@ -248,5 +382,10 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.POST_NOTIFICATIONS
         ) == PackageManager.PERMISSION_GRANTED
         if (!granted) requestNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
+
+    private companion object {
+        const val TAPS_REQUIRED = 5
+        const val TAPS_WINDOW_MS = 3_000L
     }
 }

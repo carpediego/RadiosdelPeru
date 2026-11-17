@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "versionCode": 5,
+  "versionName": "1.4.0",
+  "apkUrl": "https://github.com/carpediego/RadiosdelPeru/releases/download/v1.4.0/RadiosDelPeru-1.4.0.apk",
+  "sha256": "08190dd53abfee46e1ce8187b7ac5554a688ec9488dbea45171385cae63f3607",
+  "notes": "Actualizador dentro de la app: etiqueta de version, aviso de version nueva y 5 toques para forzar la descarga",
+  "publishedAt": "2026-11-17"
+}

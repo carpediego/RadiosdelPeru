@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Carpeta desde la que el actualizador entrega el APK al instalador del sistema.
+    Solo se comparte el archivo concreto (grantUriPermissions), nada más.
+-->
+<paths>
+    <cache-path name="updates" path="updates/" />
+</paths>

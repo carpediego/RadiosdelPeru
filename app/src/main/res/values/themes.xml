@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <style name="Theme.Radios" parent="Theme.AppCompat.DayNight.NoActionBar">
@@ -58,6 +58,22 @@
     <style name="TextNowStatus">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/text_secondary</item>
+    </style>
+
+    <style name="TextVersion">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextUpdateLink">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/accent</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
     </style>
 
     <style name="ButtonBig">

@@ -21,4 +21,18 @@
 
     <string name="cd_play">Escuchar %1$s</string>
     <string name="cd_stop">Detener %1$s</string>
+
+    <!-- Versión y actualizaciones -->
+    <string name="version_placeholder">v…</string>
+    <string name="version_label">v%1$s · catálogo %2$d</string>
+    <string name="update_action">Actualizar</string>
+    <string name="update_install">Instalar</string>
+    <string name="update_checking">Buscando actualización…</string>
+    <string name="update_up_to_date">Ya tienes la última versión (v%1$s)</string>
+    <string name="update_downloading">Descargando… %1$d%%</string>
+    <string name="update_available_toast">Versión %1$s disponible. Descargando…</string>
+    <string name="update_no_connection">No se pudo comprobar si hay actualización</string>
+    <string name="update_download_failed">No se pudo descargar la actualización</string>
+    <string name="update_permission_needed">Permite instalar apps desde esta app y vuelve a tocar Instalar</string>
+    <string name="update_install_failed">No se pudo abrir el instalador</string>
 </resources>
