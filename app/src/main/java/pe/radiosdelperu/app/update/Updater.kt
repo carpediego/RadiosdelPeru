@@ -77,6 +77,10 @@ class Updater(private val activity: Activity) {
                 busy.set(false)
 
                 if (info == null) {
+                    // Si no hay red, no insistimos en cada apertura: se reintenta mañana.
+                    if (!forced) {
+                        prefs.edit().putLong(KEY_LAST_CHECK, System.currentTimeMillis()).apply()
+                    }
                     // En la comprobación silenciosa no molestamos con errores de red.
                     if (forced) listener?.onError(context.getString(R.string.update_no_connection))
                     return@post

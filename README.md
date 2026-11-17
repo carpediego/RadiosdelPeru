@@ -4,9 +4,9 @@ App Android minimalista para escuchar radios peruanas. Pensada para personas may
 una sola pantalla, letras grandes, un toque para escuchar, sin publicidad.
 
 - **Paquete:** `pe.radiosdelperu.app`
-- **Versión:** 1.3.0 (versionCode 4)
+- **Versión:** 1.4.0 (versionCode 5)
 - **Android:** 7.0 (API 24) en adelante · targetSdk 36
-- **APK release:** 1,65 MB · sin SDKs de anuncios ni analítica · misma firma que v1–v3
+- **APK release:** 1,66 MB · sin SDKs de anuncios ni analítica · misma firma que v1–v3
 
 > `v4` es la copia de trabajo. `v3` queda como 1.2.0 (la anterior) y `v1` como la
 > versión probada y estable.
@@ -51,20 +51,63 @@ La pantalla de la app ya no decide nada: dibuja el estado que publica el servici
 
 ## Cómo llega a los teléfonos
 
-Hay dos cosas distintas y conviene no confundirlas:
+Hay tres cosas distintas y conviene no confundirlas:
 
 | Qué | ¿Se actualiza solo? |
 |---|---|
 | **Catálogo de emisoras** (`catalog/stations.json` en GitHub) | **Sí.** La app lo descarga al arrancar (máx. 1 vez cada 15 min). Cambiar una URL no requiere compilar. |
-| **Código de la app** (esta versión) | **No.** Hay que instalar el APK nuevo encima del anterior. |
+| **Código de la app** | **Semi.** Desde la 1.4.0 la app avisa y descarga la versión nueva, pero Android siempre pide confirmar la instalación. |
+| **Primera instalación** | **No.** Hay que instalar el APK una vez (cable o copiándolo al teléfono). |
 
-Subir el código a GitHub **no** actualiza los teléfonos: solo deja el repositorio al día
-y sirve para publicar el APK (por ejemplo, en *Releases*). Como la firma es la misma que
-v1–v3, el APK se instala **encima** sin desinstalar nada y sin perder nada.
+Subir el código a GitHub **no** actualiza los teléfonos por sí solo: hay que publicar un
+*Release* con el APK y actualizar `version.json` (lo hace `tools\release.ps1`). Como la
+firma es la misma que v1–v3, el APK se instala **encima** sin desinstalar y sin perder nada.
 
-Para que el teléfono avise solo de una versión nueva haría falta el pendiente de abajo
-(`version.json` + botón "Actualizar"): eso sí descargaría e instalaría el APK desde la
-propia app.
+---
+
+## Actualizaciones dentro de la app
+
+```
+GitHub: version.json  ──►  la app compara versionCode
+                              │
+                    ¿hay una más nueva?
+                       │              │
+                      no             sí
+                       │              │
+              "Ya tienes la         aparece "Actualizar" al pie
+               última versión"        │
+                                      ▼
+                         descarga el APK del Release
+                         comprueba el sha256
+                                      │
+                                      ▼
+                         abre el instalador de Android
+```
+
+- **Etiqueta al pie:** `v1.4.0 · catálogo 6`. Sirve también para soporte: "decime qué
+  dice abajo".
+- **Comprobación silenciosa:** al abrir la app, como máximo **1 vez al día**. Si hay
+  versión nueva aparece un *Actualizar* chiquito al lado de la etiqueta; si no, no se
+  muestra nada.
+- **5 toques sobre el título "Radios del Perú"** (seguidos, menos de 3 s): fuerza la
+  comprobación aunque ya se haya hecho hoy. Si hay versión nueva, descarga y abre el
+  instalador; si no, avisa "Ya tienes la última versión".
+- **Seguridad:** se verifica el `sha256` de `version.json` y, como red final, Android
+  rechaza cualquier APK firmado con otra clave.
+
+La primera vez, el teléfono pedirá **"Permitir instalar apps de esta fuente"** para
+Radios del Perú (y Play Protect puede avisar: *Instalar de todos modos*). Es una sola vez.
+
+### Publicar una versión nueva
+
+1. Subir `versionCode` y `versionName` en `app/build.gradle.kts`.
+2. `.\tools\release.ps1 -Notes "Qué cambió"` → compila, calcula el `sha256` y escribe
+   `version.json`; deja `dist\RadiosDelPeru-<versión>.apk` con nombre estable.
+3. Crear el Release en GitHub (`releases/new?tag=v<versión>`) y subir ese APK.
+4. `git add version.json; git commit -m "version <versión>"; git push`.
+
+A partir de ahí, los teléfonos con 1.4.0 en adelante lo ven solos en la próxima apertura
+(o con los 5 toques).
 
 ---
 
@@ -127,7 +170,9 @@ cd <carpeta-del-proyecto>
 
 ```
 catalog/stations.json          ← única fuente de verdad del catálogo
+version.json                   ← última versión publicada (lo lee el actualizador)
 tools/validate.mjs             ← validador/reparador (lo usa el robot y se puede correr a mano)
+tools/release.ps1              ← compila, calcula sha256 y escribe version.json
 .github/workflows/catalog.yml  ← robot cada 6 horas
 app/src/main/
 ├─ java/pe/radiosdelperu/app/
@@ -138,6 +183,8 @@ app/src/main/
 │  ├─ player/LiveRadioPlayer.kt    play = volver al directo
 │  ├─ player/PlaybackStatus.kt     estado compartido servicio ↔ pantalla
 │  ├─ player/SessionState.kt       última emisora escuchada
+│  ├─ update/Updater.kt            comprobar, descargar e instalar la versión nueva
+│  ├─ update/UpdateInfo.kt         lectura de version.json
 │  └─ ui/StationAdapter.kt         lista de emisoras
 └─ res/                            layouts, colores día/noche, icono
 ```
@@ -173,7 +220,7 @@ Huella SHA-256: `6BB20C4CBE6462961A2030B29E9094DFF815114B7FFFAB80576352C3A0A5AAE
 
 ## Pendiente
 
-- [ ] Aviso de nueva versión del APK (`version.json` + botón "Actualizar").
+- [x] Aviso de nueva versión del APK (`version.json` + botón "Actualizar").
 - [ ] Favoritos y filtros por categoría.
 - [ ] Logos reales de las emisoras.
 - [ ] Ampliar a ~35 emisoras (regionales).

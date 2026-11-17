@@ -25,6 +25,7 @@
     <!-- Versión y actualizaciones -->
     <string name="version_placeholder">v…</string>
     <string name="version_label">v%1$s · catálogo %2$d</string>
+    <string name="version_label_short">v%1$s</string>
     <string name="update_action">Actualizar</string>
     <string name="update_install">Instalar</string>
     <string name="update_checking">Buscando actualización…</string>

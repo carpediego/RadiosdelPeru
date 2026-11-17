@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity() {
 
     private var pendingUpdate: UpdateInfo? = null
     private var pendingApk: File? = null
+    private var downloading = false
 
     private var taps = 0
     private var firstTapAt = 0L
@@ -115,7 +116,6 @@ class MainActivity : AppCompatActivity() {
         findViewById<View>(R.id.txtTitle).setOnClickListener { onTitleTapped() }
         txtUpdate.setOnClickListener { onUpdateClicked() }
         renderVersionLabel()
-        updater.check(forced = false)
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -131,6 +131,8 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         PlaybackStatus.addListener(onStatusChanged)
         connectController()
+        // Como mucho una vez al día; si ya se comprobó hoy, no hace nada.
+        updater.check(forced = false)
     }
 
     override fun onStop() {
@@ -177,6 +179,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onUpdateClicked() {
+        if (downloading) return
         pendingApk?.let {
             updater.install(it)
             return
@@ -185,17 +188,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startDownload(info: UpdateInfo) {
+        if (downloading) return
+        downloading = true
         txtUpdate.visibility = View.VISIBLE
         txtUpdate.text = getString(R.string.update_downloading, 0)
         updater.download(info)
     }
 
     private fun renderVersionLabel() {
-        txtVersion.text = getString(
-            R.string.version_label,
-            updater.installedVersionName,
-            catalogVersion
-        )
+        val installed = updater.installedVersionName
+        txtVersion.text = if (catalogVersion > 0) {
+            getString(R.string.version_label, installed, catalogVersion)
+        } else {
+            getString(R.string.version_label_short, installed)
+        }
     }
 
     private val updateListener = object : Updater.Listener {
@@ -236,6 +242,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onReady(file: File) {
+            downloading = false
             pendingApk = file
             txtUpdate.visibility = View.VISIBLE
             txtUpdate.text = getString(R.string.update_install)
@@ -243,6 +250,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onError(message: String) {
+            downloading = false
             txtUpdate.visibility = if (pendingUpdate != null) View.VISIBLE else View.GONE
             txtUpdate.text = getString(R.string.update_action)
             Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
