@@ -253,9 +253,12 @@ class Updater(private val activity: Activity) {
                     while (true) {
                         val count = input.read(buffer)
                         if (count <= 0) break
-                        output.write(buffer, 0, count)
                         read += count
-                        if (total > 0 && read <= MAX_APK_BYTES) {
+                        if (read > MAX_APK_BYTES) {
+                            throw IllegalStateException("APK demasiado grande")
+                        }
+                        output.write(buffer, 0, count)
+                        if (total > 0) {
                             val percent = ((read * 100) / total).toInt()
                             if (percent != lastPercent) {
                                 lastPercent = percent

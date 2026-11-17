@@ -180,10 +180,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun onUpdateClicked() {
         if (downloading) return
-        pendingApk?.let {
-            updater.install(it)
+
+        val apk = pendingApk
+        if (apk != null && apk.exists()) {
+            updater.install(apk)
             return
         }
+        // Si Android limpió la caché, se vuelve a descargar en vez de quedarse trabado.
+        pendingApk = null
         pendingUpdate?.let { startDownload(it) }
     }
 
