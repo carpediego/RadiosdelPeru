@@ -4,12 +4,29 @@ App Android minimalista para escuchar radios peruanas. Pensada para personas may
 una sola pantalla, letras grandes, un toque para escuchar, sin publicidad.
 
 - **Paquete:** `pe.radiosdelperu.app`
-- **Versión:** 1.4.0 (versionCode 5)
+- **Versión:** 1.5.0 (versionCode 6)
 - **Android:** 7.0 (API 24) en adelante · targetSdk 36
-- **APK release:** 1,66 MB · sin SDKs de anuncios ni analítica · misma firma que v1–v3
+- **APK release:** 1,67 MB · sin SDKs de anuncios ni analítica · misma firma que v1–v3
 
 > `v4` es la copia de trabajo. `v3` queda como 1.2.0 (la anterior) y `v1` como la
 > versión probada y estable.
+
+---
+
+## Qué hay de nuevo en 1.5.0: la radio ya no se queda muda
+
+Si internet se cortaba más de ~30 segundos, la app daba la emisora por "no disponible"
+**para siempre**: aunque volviera la red, seguía muda hasta que alguien tocara otra
+emisora. Eso es lo que se percibía como "se paró la radio".
+
+Ahora:
+
+- Reintenta rápido (1,5 → 3 → 6 → 12 s) y después **cada 30 s hasta 10 minutos**.
+- Cuando el teléfono recupera la red, **reintenta al instante** (no espera al siguiente).
+- Vigila los cortes silenciosos (stream colgado sin dar error) y reconecta solo.
+
+Probado en emulador: 3 minutos sin red → "Sin conexión. Reintentando…"; al volver la red,
+"● EN VIVO" en ~3 segundos.
 
 ---
 

@@ -1,9 +1,9 @@
 {
   "schema": 1,
-  "versionCode": 5,
-  "versionName": "1.4.0",
-  "apkUrl": "https://github.com/carpediego/RadiosdelPeru/releases/download/v1.4.0/RadiosDelPeru-1.4.0.apk",
-  "sha256": "de79cfe1c2208fd1b34f1768cddf0bbbe7d759d32c0767ec4a4b49c126434a09",
-  "notes": "Actualizador dentro de la app: etiqueta de version, aviso de version nueva y 5 toques para forzar la descarga",
-  "publishedAt": "2026-11-17"
+  "versionCode": 6,
+  "versionName": "1.5.0",
+  "apkUrl": "https://github.com/carpediego/RadiosdelPeru/releases/download/v1.5.0/RadiosDelPeru-1.5.0.apk",
+  "sha256": "acef1b045ea4fd35ffe39f40069e89a2a918897270f9e26e7b3b0819ce364e6d",
+  "notes": "Corrige que la radio se quedara muda para siempre tras un corte de internet largo. Ahora reintenta cada 30 s (hasta 10 min), se recupera sola cuando vuelve la red y vigila los cortes silenciosos del stream.",
+  "publishedAt": "2026-11-27"
 }

@@ -1,9 +1,13 @@
 package pe.radiosdelperu.app.player
 
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -46,8 +50,10 @@ class PlaybackService : MediaSessionService() {
 
     private val handler = Handler(Looper.getMainLooper())
     private var retryRunnable: Runnable? = null
+    private var stallRunnable: Runnable? = null
     private var candidateIndex = 0
     private var retryCount = 0
+    private var slowRetryCount = 0
 
     /** Estado "de espera" que no se puede deducir del reproductor: reintentando o caída. */
     private var pending: PlaybackStatus.Phase? = null
@@ -94,6 +100,13 @@ class PlaybackService : MediaSessionService() {
             // al menos el botón de play queda a la vista para reintentar desde la app.
             .setShowPlayButtonIfPlaybackIsSuppressed(true)
             .build()
+
+        // Si vuelve la red, reintentar de inmediato en vez de esperar al siguiente intento.
+        try {
+            connectivity?.registerDefaultNetworkCallback(networkCallback)
+        } catch (_: Exception) {
+            // Sin permiso o sin red: los reintentos normales cubren el caso.
+        }
     }
 
     private fun openAppIntent(): PendingIntent {
@@ -121,9 +134,11 @@ class PlaybackService : MediaSessionService() {
                     pending = null
                     candidateIndex = 0
                     retryCount = 0
+                    slowRetryCount = 0
                 }
             } else {
                 livePlayer.onPaused()
+                cancelStallWatchdog()
                 if (reason == Player.PLAY_WHEN_READY_CHANGE_REASON_USER_REQUEST) {
                     pausedByUser = true
                 }
@@ -136,16 +151,20 @@ class PlaybackService : MediaSessionService() {
                 livePlayer.onLive()
                 pausedByUser = false
                 retryCount = 0
+                slowRetryCount = 0
                 pending = null
             }
             refreshStatus()
         }
 
         override fun onPlaybackStateChanged(playbackState: Int) {
-            if (playbackState == Player.STATE_BUFFERING &&
-                pending != PlaybackStatus.Phase.UNAVAILABLE
-            ) {
+            if (playbackState == Player.STATE_BUFFERING && pending != PlaybackStatus.Phase.UNAVAILABLE) {
                 pending = null
+            }
+            if (playbackState == Player.STATE_BUFFERING && player.playWhenReady) {
+                armStallWatchdog()
+            } else if (playbackState != Player.STATE_BUFFERING) {
+                cancelStallWatchdog()
             }
             refreshStatus()
         }
@@ -158,6 +177,7 @@ class PlaybackService : MediaSessionService() {
                 station = stations.firstOrNull { it.id == id }
                 candidateIndex = 0
                 retryCount = 0
+                slowRetryCount = 0
                 pending = null
             }
 
@@ -185,6 +205,7 @@ class PlaybackService : MediaSessionService() {
         }
 
         override fun onPlayerError(error: PlaybackException) {
+            Log.w(TAG, "error de reproducción ${error.errorCodeName}: ${error.message}")
             onPlaybackError()
         }
     }
@@ -230,15 +251,27 @@ class PlaybackService : MediaSessionService() {
             return
         }
 
-        // 2. Reintentos con espera creciente.
-        if (retryCount >= MAX_RETRIES) {
-            pending = PlaybackStatus.Phase.UNAVAILABLE
-            refreshStatus()
+        // 2. Reintentos rápidos con espera creciente.
+        if (retryCount < MAX_RETRIES) {
+            val delayMs = BACKOFF_MS[retryCount.coerceAtMost(BACKOFF_MS.lastIndex)]
+            retryCount++
+            scheduleRetry(current, delayMs)
             return
         }
 
-        val delayMs = BACKOFF_MS[retryCount.coerceAtMost(BACKOFF_MS.lastIndex)]
-        retryCount++
+        // 3. Reintentos lentos: un corte de internet largo no debe dejar la radio muda
+        //    para siempre. Se sigue intentando cada 30 s durante 10 minutos más.
+        if (slowRetryCount < MAX_SLOW_RETRIES) {
+            slowRetryCount++
+            scheduleRetry(current, SLOW_RETRY_MS)
+            return
+        }
+
+        pending = PlaybackStatus.Phase.UNAVAILABLE
+        refreshStatus()
+    }
+
+    private fun scheduleRetry(current: Station, delayMs: Long) {
         pending = PlaybackStatus.Phase.RETRYING
         refreshStatus()
 
@@ -248,6 +281,66 @@ class PlaybackService : MediaSessionService() {
         }
         retryRunnable = runnable
         handler.postDelayed(runnable, delayMs)
+    }
+
+    /**
+     * Vigila que el stream no se quede colgado sin dar error (pasa al cambiar de WiFi a
+     * datos: el socket viejo se queda mudo). Si sigue "conectando" demasiado tiempo, se
+     * vuelve a pedir el stream.
+     */
+    private fun armStallWatchdog() {
+        cancelStallWatchdog()
+        val runnable = Runnable {
+            stallRunnable = null
+            if (player.playWhenReady && player.playbackState == Player.STATE_BUFFERING) {
+                val current = station ?: return@Runnable
+                Log.i(TAG, "stream colgado ${STALL_TIMEOUT_MS} ms: reconectando")
+                retryCount = 0
+                startStation(current, candidateIndex)
+            }
+        }
+        stallRunnable = runnable
+        handler.postDelayed(runnable, STALL_TIMEOUT_MS)
+    }
+
+    private fun cancelStallWatchdog() {
+        stallRunnable?.let { handler.removeCallbacks(it) }
+        stallRunnable = null
+    }
+
+    // ------------------------------------------------------------------ red
+
+    private val connectivity: ConnectivityManager? by lazy {
+        try {
+            getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    /**
+     * Cuando vuelve la red no esperamos al siguiente reintento: si estábamos sin conexión,
+     * reintentamos al instante.
+     *
+     * OJO: este callback llega en un hilo del sistema, no en el principal. Todo el estado
+     * del servicio se toca en el hilo principal, así que se reenvía con `handler.post`.
+     */
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network) {
+            handler.post {
+                val phase = pending ?: return@post
+                if (phase != PlaybackStatus.Phase.RETRYING &&
+                    phase != PlaybackStatus.Phase.UNAVAILABLE
+                ) return@post
+
+                val current = station ?: return@post
+                Log.i(TAG, "red disponible: reintento inmediato")
+                cancelRetry()
+                retryCount = 0
+                slowRetryCount = 0
+                startStation(current, candidateIndex)
+            }
+        }
     }
 
     private fun startStation(target: Station, index: Int) {
@@ -324,6 +417,12 @@ class PlaybackService : MediaSessionService() {
 
     override fun onDestroy() {
         cancelRetry()
+        cancelStallWatchdog()
+        try {
+            connectivity?.unregisterNetworkCallback(networkCallback)
+        } catch (_: Exception) {
+            // No estaba registrado.
+        }
         player.removeListener(playerListener)
         mediaSession?.run {
             player.release()
@@ -337,8 +436,16 @@ class PlaybackService : MediaSessionService() {
 
     companion object {
 
+        private const val TAG = "PlaybackService"
         private const val MAX_RETRIES = 4
         private val BACKOFF_MS = longArrayOf(1_500L, 3_000L, 6_000L, 12_000L)
+
+        /** Reintentos lentos: cada 30 s durante 10 minutos (20 intentos). */
+        private const val SLOW_RETRY_MS = 30_000L
+        private const val MAX_SLOW_RETRIES = 20
+
+        /** Si sigue "conectando" tanto tiempo sin dar error, se reconecta. */
+        private const val STALL_TIMEOUT_MS = 25_000L
 
         /** El mismo MediaItem que usa la pantalla y la reanudación del sistema. */
         fun mediaItemFor(station: Station, candidateIndex: Int = 0): MediaItem? {
