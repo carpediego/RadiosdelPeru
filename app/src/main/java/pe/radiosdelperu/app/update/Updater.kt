@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.util.Log
 import androidx.core.content.FileProvider
 import pe.radiosdelperu.app.R
 import java.io.File
@@ -67,7 +68,10 @@ class Updater(private val activity: Activity) {
     /** Busca actualización. `forced = true` ignora la comprobación diaria. */
     fun check(forced: Boolean) {
         if (!forced && !shouldCheck()) return
-        if (!busy.compareAndSet(false, true)) return
+        if (!busy.compareAndSet(false, true)) {
+            Log.i(TAG, "comprobación ignorada: ya hay una en curso")
+            return
+        }
 
         main.post { listener?.onChecking(forced) }
 
@@ -81,12 +85,18 @@ class Updater(private val activity: Activity) {
                     if (!forced) {
                         prefs.edit().putLong(KEY_LAST_CHECK, System.currentTimeMillis()).apply()
                     }
+                    Log.w(TAG, "no se pudo leer version.json")
                     // En la comprobación silenciosa no molestamos con errores de red.
                     if (forced) listener?.onError(context.getString(R.string.update_no_connection))
                     return@post
                 }
 
                 prefs.edit().putLong(KEY_LAST_CHECK, System.currentTimeMillis()).apply()
+                Log.i(
+                    TAG,
+                    "version.json: ${info.versionName} (${info.versionCode}) · " +
+                        "instalada: $installedVersionName ($installedVersionCode)"
+                )
 
                 if (info.versionCode > installedVersionCode) {
                     listener?.onUpdateAvailable(info, forced)
@@ -198,11 +208,14 @@ class Updater(private val activity: Activity) {
         for (url in REMOTE_URLS) {
             val text = try {
                 httpGet(url)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                Log.w(TAG, "fallo de red en $url: ${e.message}")
                 null
             } ?: continue
 
-            UpdateInfo.parse(text)?.let { return it }
+            val info = UpdateInfo.parse(text)
+            Log.i(TAG, "respuesta de $url -> ${info?.versionName ?: "json inválido"}")
+            if (info != null) return info
         }
         return null
     }
@@ -288,6 +301,7 @@ class Updater(private val activity: Activity) {
     }
 
     private companion object {
+        const val TAG = "Updater"
         const val PREFS = "updates"
         const val KEY_LAST_CHECK = "last_check"
         const val CHECK_INTERVAL_MS = 24L * 60 * 60 * 1000
